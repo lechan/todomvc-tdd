@@ -31,6 +31,18 @@ describe('TodoItem.vue', () => {
     expect(todoItem.element.className).toBe('completed')
   })
 
+  it('更改任务项的完成状态，向外发送 change-todo-status 事件', async () => {
+    const doneCheckbox = wrapper.find('[data-testid="todo-done"]')
+    await doneCheckbox.trigger('click')
+    const todo = wrapper.vm.todo
+    const emittedValue = {
+      id: todo.id,
+      done: !todo.done
+    }
+    expect(wrapper.emitted()['change-todo-status']).toBeTruthy()
+    expect(wrapper.emitted()['change-todo-status'][0][0]).toMatchObject(emittedValue)
+  })
+
   it('点击删除按钮，触发删除事件，并且传递的值为该todo的id', async () => {
     const destoryBtn = wrapper.find('[data-testid="destory-btn"]')
     const todo = wrapper.vm.todo
@@ -61,4 +73,5 @@ describe('TodoItem.vue', () => {
     expect(wrapper.emitted()['edit-done']).toBeTruthy()
     expect(wrapper.emitted()['edit-done'][0][0]).toBe(testWord)
   })
+  
 })

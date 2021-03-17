@@ -3,7 +3,7 @@
     <todo-header></todo-header>
     <!-- This section should be hidden by default and shown when there are todos -->
     <section class="main">
-      <input id="toggle-all" class="toggle-all" type="checkbox">
+      <input id="toggle-all" data-testid="check-all-btn" class="toggle-all" type="checkbox" v-model="isSelectAll" @change="handleChangeSelectAll">
       <label for="toggle-all">Mark all as complete</label>
       <ul class="todo-list">
         <!-- These are here just to show the structure of the list items -->
@@ -33,6 +33,7 @@ export default {
   },
   data () {
     return {
+      isSelectAll: false,
       todos: [{
         id: 1, text: 'a', done: true
       }, {
@@ -40,6 +41,12 @@ export default {
       }, {
         id: 3, text: 'c', done: false
       }]
+    }
+  },
+  methods: {
+    handleChangeSelectAll () {
+      const isSelectAll = this.isSelectAll
+      this.todos.forEach(item => item.done = isSelectAll)
     }
   }
 }

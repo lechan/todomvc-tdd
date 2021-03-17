@@ -7,7 +7,7 @@
     data-testid="todo-item-li"
     @dblclick="handleEdit">
       <div data-testid="todo-view" class="view">
-        <input data-testid="todo-done" class="toggle" type="checkbox" v-model="todo.done">
+        <input data-testid="todo-done" class="toggle" type="checkbox" v-model="todo.done" @change="handleDodoDone(todo)">
         <label data-testid="todo-text">{{ todo.text }}</label>
         <button data-testid="destory-btn" class="destroy" @click="handleDestory(todo.id)"></button>
       </div>
@@ -33,6 +33,12 @@ export default {
   methods: {
     handleDestory (id) {
       this.$emit('destory-todo', id)
+    },
+    handleDodoDone ({id, done}) {
+      this.$emit('change-todo-status', {
+        id,
+        done: !done
+      })
     },
     handleEdit () {
       this.isEdit = true
