@@ -7,11 +7,11 @@
     data-testid="todo-item-li"
     @dblclick="handleEdit">
       <div data-testid="todo-view" class="view">
-        <input data-testid="todo-done" class="toggle" type="checkbox" v-model="todo.done" @change="handleDodoDone(todo)">
+        <input data-testid="todo-done" class="toggle" type="checkbox" v-model="todo.done">
         <label data-testid="todo-text">{{ todo.text }}</label>
         <button data-testid="destory-btn" class="destroy" @click="handleDestory(todo.id)"></button>
       </div>
-      <input data-testid="edit-input" class="edit" v-model="editValue" @blur="handleEditComplete">
+      <input data-testid="edit-input" :ref="`editInput-${todo.id}`" class="edit" v-model="editValue" @blur="handleEditComplete">
   </li>
 </template>
 
@@ -34,19 +34,19 @@ export default {
     handleDestory (id) {
       this.$emit('destory-todo', id)
     },
-    handleDodoDone ({id, done}) {
-      this.$emit('change-todo-status', {
-        id,
-        done: !done
-      })
-    },
     handleEdit () {
       this.isEdit = true
       this.editValue = this.todo.text
+      this.$nextTick(() => {
+        this.$refs[`editInput-${this.todo.id}`].focus()
+      })
     },
     handleEditComplete () {
       this.isEdit = false
-      this.$emit('edit-done', this.editValue)
+      this.$emit('edit-done', {
+        id: this.todo.id,
+        text: this.editValue
+      })
     }
   }
 }

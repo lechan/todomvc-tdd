@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
     <!-- This should be `0 items left` by default -->
-    <span class="todo-count"><strong>0</strong> item left</span>
+    <span class="todo-count"><strong data-testid="todos-count">{{ todosCount }}</strong> item left</span>
     <!-- Remove this if you don't implement routing -->
     <ul class="filters">
       <li>
@@ -15,13 +15,29 @@
       </li>
     </ul>
     <!-- Hidden if no completed items are left ↓ -->
-    <button class="clear-completed">Clear completed</button>
+    <button data-testid="clear-btn" class="clear-completed" @click="handleClearCompleted">Clear completed</button>
   </footer>
 </template>
 
 <script>
 export default {
-  name: 'TodoFooter'
+  name: 'TodoFooter',
+  props: {
+    todos: {
+      type: Array,
+      default: () => []
+    }
+  },
+  computed: {
+    todosCount() {
+      return this.todos.length
+    }
+  },
+  methods: {
+    handleClearCompleted () {
+      this.$emit('clear-completed')
+    }
+  }
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <section class="todoapp">
-    <todo-header></todo-header>
+    <todo-header @new-todo="handleNewTodo"></todo-header>
     <!-- This section should be hidden by default and shown when there are todos -->
     <section class="main">
       <input id="toggle-all" data-testid="check-all-btn" class="toggle-all" type="checkbox" v-model="isSelectAll" @change="handleChangeSelectAll">
@@ -13,10 +13,15 @@
           :key="todo.id"
           :todo="todo"
           data-testid="todo-item"
+          @destory-todo="handleRemoveTodo"
+          @edit-done="handleEditComplete"
         ></todo-item>
       </ul>
     </section>
-    <todo-footer></todo-footer>
+    <todo-footer
+      :todos="todos"
+      @clear-completed="handleClearCompleted"
+    ></todo-footer>
   </section>
 </template>
 
@@ -40,14 +45,52 @@ export default {
         id: 2, text: 'b', done: false
       }, {
         id: 3, text: 'c', done: false
-      }]
+      }],
+      currentLastId: 0
     }
   },
   methods: {
+    initCurrentLastId () {
+      const length = this.todos.length
+      let lastItem = null
+      if (length) {
+        lastItem = this.todos[length - 1]
+        this.currentLastId = lastItem.id
+      }
+    },
     handleChangeSelectAll () {
       const isSelectAll = this.isSelectAll
       this.todos.forEach(item => item.done = isSelectAll)
+    },
+    handleNewTodo (value) {
+      this.currentLastId = this.currentLastId + 1
+      const item = {
+        id: this.currentLastId,
+        text: value,
+        done: false
+      }
+      this.todos.push(item)
+    },
+    handleRemoveTodo (id) {
+      this.todos.forEach((item, index) => {
+        if (item.id === id) {
+          this.todos.splice(index, 1)
+        }
+      })
+    },
+    handleEditComplete ({ id, text }) {
+      this.todos.forEach(item => {
+        if (item.id === id) {
+          item.text = text
+        }
+      })
+    },
+    handleClearCompleted () {
+      this.todos = this.todos.filter(item => !item.done)
     }
+  },
+  created () {
+    this.initCurrentLastId()
   }
 }
 </script>
