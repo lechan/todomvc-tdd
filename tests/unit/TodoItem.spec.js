@@ -1,5 +1,7 @@
 import TodoItem from '@/components/TodoItem'
 import { shallowMount } from '@vue/test-utils'
+import '@testing-library/jest-dom'
+import Vue from 'vue'
 
 describe('TodoItem.vue', () => {
   /**@type {import('@vue/test-utils').Wrapper} */
@@ -46,14 +48,15 @@ describe('TodoItem.vue', () => {
     验证该input是否获取了焦点
   `, async () => {
     const todoItem = wrapper.find('[data-testid="todo-item-li"]')
-    // const todoView = wrapper.find('[data-testid="todo-view"]')
+    const todoView = wrapper.find('[data-testid="todo-view"]')
     const todoEdit = wrapper.find('[data-testid="edit-input"]')
     const todo = wrapper.vm.todo
     await todoItem.trigger('dblclick')
     expect(todoItem.classes()).toContain('editing')
-    // expect(todoView.isVisible()).toBeFalsy()
+    expect(todoView.element).not.toBeVisible()
     expect(todoEdit.element.value).toBe(todo.text)
-    // expect(todoEdit.element.focus).toBeCalled()
+    await Vue.nextTick()
+    expect(todoEdit.element).toHaveFocus()
   })
 
   it('光标移出edit输入框，向外发送edit-done事件，并且去掉listItem上名称为editing的className', async () => {
